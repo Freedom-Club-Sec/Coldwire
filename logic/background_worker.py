@@ -86,13 +86,19 @@ def background_worker(user_data, user_data_lock, ui_queue, stop_flag):
             logger.debug("Received data: %s", str(message)[:3000])
 
             # Sanity check universal message fields
-            if (not "sender" in message) or (not message["sender"].isdigit()) or (len(message["sender"]) != 16):
-                logger.error("Impossible condition, either you have discovered a bug in Coldwire, or the server is attempting to denial-of-service you. Skipping data message with no (or malformed) sender...")
-
-                if "sender" in message:
-                    logger.debug("Impossible condition's sender is: %s", message["sender"])
-
+            if (not "sender" in message):
+                logger.error("Impossible condition, either you have discovered a bug in Coldwire, or the server is attempting to denial-of-service you. Skipping data message with no sender...")
                 continue
+
+            if message["sender"].isdigit() and len(message["sender"]) != 16:
+                logger.error("Impossible condition, either you have discovered a bug in Coldwire, or the server is attempting to denial-of-service you. Skipping data message with malformed same-server sender (%s)...", message["sender"])
+                continue
+        
+            if (not message["sender"].isdigit()): 
+                split = message["sender"].split("@")
+                if (len(split) != 2) or (not split[0].isdigit()):
+                    logger.error("Impossible condition, either you have discovered a bug in Coldwire, or the server is attempting to denial-of-service you. Skipping data message with malformed federated-server sender (%s)...", message["sender"])
+                    continue
 
             sender = message["sender"]
             blob   = message["blob"]
@@ -115,10 +121,10 @@ def background_worker(user_data, user_data_lock, ui_queue, stop_flag):
                         try:
                             blob_plaintext = decrypt_xchacha20poly1305(chacha_key, blob[:XCHACHA20POLY1305_NONCE_LEN], blob[XCHACHA20POLY1305_NONCE_LEN:])
                         except Exception as e:
-                            logger.debug("Failed to decrypt blob from contact (%s) probably due to invalid nonce: %s", sender, str(e))
                             if contact_next_strand_nonce is None:
                                 raise Exception("Unable to decrypt apparent SMP request due to missing contact strand nonce.")
 
+                            logger.debug("Failed to decrypt blob from contact (%s) probably due to invalid nonce: %s, we will try decrypting using strand nonce", sender, str(e))
                             blob_plaintext = decrypt_xchacha20poly1305(chacha_key, contact_next_strand_nonce, blob)
 
                     except Exception as e:

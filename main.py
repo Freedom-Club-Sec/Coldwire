@@ -25,7 +25,7 @@ def setup_logging(debug: bool) -> None:
     logger.addHandler(handler)
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Coldwire - Post-Quantum secure messenger")
+    parser = argparse.ArgumentParser(description="Coldwire - Ultra-Paranoid, Post-Quantum Secure Messenger")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     return parser.parse_args()
 

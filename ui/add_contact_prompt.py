@@ -42,18 +42,19 @@ class AddContactPrompt(tk.Toplevel):
 
     def add_contact(self):
         contact_id = self.entry.get().strip()
-        if not (contact_id.isdigit() and len(contact_id) == 16):
+        """if not (contact_id.isdigit() and len(contact_id) == 16):
             self.status.config(text="Invalid User ID", fg="red")
             return
+        """
 
         if contact_id == self.master.user_data["user_id"]:
             self.status.config(text="You cannot add yourself", fg="red")
             return
             
         try:
-            if not check_if_contact_exists(self.master.user_data, self.master.user_data_lock, contact_id):
-                logger.error("[BUG] This should never execute, because the server should return a 40X error code and that should cause an exception..")
-                return
+            # if not check_if_contact_exists(self.master.user_data, self.master.user_data_lock, contact_id):
+            #    logger.error("[BUG] This should never execute, because the server should return a 40X error code and that should cause an exception..")
+            #    return
 
             save_contact(self.master.user_data, self.master.user_data_lock, contact_id)
             save_account_data(self.master.user_data, self.master.user_data_lock)

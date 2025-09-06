@@ -10,6 +10,7 @@ SMP_TYPE = b"\x00"
 PFS_TYPE = b"\x01"
 MSG_TYPE = b"\x02"
 
+COLDWIRE_DATA_SEP   = b"\0"
 COLDWIRE_LEN_OFFSET = 3
 
 # network defaults (seconds & bytes)

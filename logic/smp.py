@@ -244,6 +244,10 @@ def smp_step_3(user_data: dict, user_data_lock: threading.Lock, contact_id: str,
 
 
 def smp_step_4_request_answer(user_data, user_data_lock, contact_id, smp_plaintext, ui_queue) -> None:
+    with user_data_lock:
+        our_nonce = b64decode(user_data["contacts"][contact_id]["lt_sign_key_smp"]["our_nonce"])
+
+
     contact_new_strand_nonce = smp_plaintext[:XCHACHA20POLY1305_NONCE_LEN]
     
     contact_signing_public_key = smp_plaintext[XCHACHA20POLY1305_NONCE_LEN : ML_DSA_87_PK_LEN + XCHACHA20POLY1305_NONCE_LEN]
@@ -253,6 +257,12 @@ def smp_step_4_request_answer(user_data, user_data_lock, contact_id, smp_plainte
     contact_proof = b64encode(smp_plaintext[XCHACHA20POLY1305_NONCE_LEN + SMP_NONCE_LENGTH + ML_DSA_87_PK_LEN : SMP_NONCE_LENGTH + SMP_PROOF_LENGTH + ML_DSA_87_PK_LEN + XCHACHA20POLY1305_NONCE_LEN]).decode()
 
     question      = smp_plaintext[SMP_NONCE_LENGTH + XCHACHA20POLY1305_NONCE_LEN + SMP_PROOF_LENGTH + ML_DSA_87_PK_LEN:].decode("utf-8")
+
+    if our_nonce == contact_nonce:
+        logger.warning("SMP Verification failed at step 4: Contact nonce is the same as our nonce!")
+        smp_failure_notify_contact(user_data, user_data_lock, contact_id, ui_queue)
+        return
+
 
 
     with user_data_lock: 

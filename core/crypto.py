@@ -14,7 +14,6 @@ Implements:
 
 import oqs
 import secrets
-from typing import Tuple
 from core.constants import (
     OTP_PAD_SIZE,
     OTP_MAX_RANDOM_PAD,
@@ -62,7 +61,7 @@ def verify_signature(algorithm: str, message: bytes, signature: bytes, public_ke
     with oqs.Signature(algorithm) as verifier:
         return verifier.verify(message, signature[:ALGOS_BUFFER_LIMITS[algorithm]["SIGN_LEN"]], public_key[:ALGOS_BUFFER_LIMITS[algorithm]["PK_LEN"]])
 
-def generate_sign_keys(algorithm: str = ML_DSA_87_NAME) -> Tuple[bytes, bytes]:
+def generate_sign_keys(algorithm: str = ML_DSA_87_NAME) -> tuple[bytes, bytes]:
     """
     Generates a new post-quantum signature keypair.
 
@@ -77,7 +76,7 @@ def generate_sign_keys(algorithm: str = ML_DSA_87_NAME) -> Tuple[bytes, bytes]:
         private_key = signer.export_secret_key()
         return private_key, public_key
 
-def otp_encrypt_with_padding(plaintext: bytes, key: bytes) -> Tuple[bytes, bytes]:
+def otp_encrypt_with_padding(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     """
     Encrypts plaintext using a one-time pad with random or bucket padding.
 
@@ -151,7 +150,7 @@ def one_time_pad(plaintext: bytes, key: bytes) -> bytes:
     key = key[len(otpd_plaintext):]
     return otpd_plaintext, key
 
-def generate_kem_keys(algorithm: str) -> Tuple[bytes, bytes]:
+def generate_kem_keys(algorithm: str) -> tuple[bytes, bytes]:
     """
     Generates a KEM keypair.
 
@@ -166,7 +165,7 @@ def generate_kem_keys(algorithm: str) -> Tuple[bytes, bytes]:
         private_key = kem.export_secret_key()
         return private_key, public_key
 
-def encap_shared_secret(public_key: bytes, algorithm: str) -> Tuple[bytes, bytes]:
+def encap_shared_secret(public_key: bytes, algorithm: str) -> tuple[bytes, bytes]:
     """
     Derive a KEM shared secret from a public key.
 
@@ -226,7 +225,7 @@ def decrypt_shared_secrets(ciphertext_blob: bytes, private_key: bytes, algorithm
 
     return shared_secrets #[:otp_pad_size]
 
-def generate_shared_secrets(public_key: bytes, algorithm: str = None, size: int = OTP_PAD_SIZE) -> Tuple[bytes, bytes]:
+def generate_shared_secrets(public_key: bytes, algorithm: str = None, size: int = OTP_PAD_SIZE) -> tuple[bytes, bytes]:
     """
     Generates many shared secrets via `algorithm` encapsulation in chunks.
 

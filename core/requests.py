@@ -99,7 +99,7 @@ def http_request(url: str, method: str, auth_token: str = None, metadata: dict =
             body = b""
             
             if metadata is not None:
-                body += encode_field("metadata", json.dumps({"metadata": metadata}), boundary, CRLF)
+                body += encode_field("metadata", json.dumps(metadata), boundary, CRLF)
             
             if blob is not None:
                 body += encode_file("blob", "blob.bin", blob, boundary, CRLF)

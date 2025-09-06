@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
-from ui.utils import *
+from ui.utils import (
+        enhanced_entry
+)
 
 class PasswordWindow(tk.Toplevel):
     def __init__(self, master, callback):

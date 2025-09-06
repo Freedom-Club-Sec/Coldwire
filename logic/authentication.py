@@ -44,8 +44,11 @@ def authenticate_account(user_data: dict) -> dict:
             raise ValueError("Could not connect to server! Are you sure your proxy settings are valid ?")
         else:
             raise ValueError("Could not connect to server! Are you sure the URL is valid ?")
-    
-    response = json.loads(response.decode())
+   
+    try:
+        response = json.loads(response.decode())
+    except Exception as e:
+        raise ValueError("Error while parsing server JSON response: ")
 
     if not 'challenge' in response:
         raise ValueError("Server did not give authenticatation challenge! Are you sure this is a Coldwire server ?")

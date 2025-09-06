@@ -1,4 +1,6 @@
-from ui.utils import *
+from ui.utils import (
+        enhanced_entry
+)
 from ui.password_window import PasswordWindow
 from logic.storage import save_account_data
 from logic.authentication import authenticate_account
